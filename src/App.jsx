@@ -85,6 +85,70 @@ function HeartCursor() {
   return <div className="heart-cursor" ref={cursor} aria-hidden="true"><svg viewBox="0 0 24 24"><defs><linearGradient id="cursor-heart-gradient" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8eaf" /><stop offset="1" stopColor="#d72655" /></linearGradient></defs><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg></div>
 }
 
+function CurtainReveal() {
+  const [phase, setPhase] = useState('closed') // closed → pause → open → done
+  const reduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (reduceMotion) { setPhase('done'); return }
+    // Wait for loading screen to finish (1050ms) + small settle
+    const pauseTimer = window.setTimeout(() => setPhase('pause'), 1200)
+    const openTimer  = window.setTimeout(() => setPhase('open'),  1900)
+    const doneTimer  = window.setTimeout(() => setPhase('done'),  3400)
+    return () => {
+      window.clearTimeout(pauseTimer)
+      window.clearTimeout(openTimer)
+      window.clearTimeout(doneTimer)
+    }
+  }, [reduceMotion])
+
+  if (phase === 'done') return null
+
+  const transition = {
+    duration: 1.32,
+    ease: [0.76, 0, 0.24, 1],
+  }
+
+  const leftVariants = {
+    closed:  { x: '0%' },
+    pause:   { x: '0%' },
+    open:    { x: '-100%' },
+  }
+  const rightVariants = {
+    closed:  { x: '0%' },
+    pause:   { x: '0%' },
+    open:    { x: '100%' },
+  }
+
+  return createPortal(
+    <div className="curtain-reveal" aria-hidden="true">
+      <motion.div
+        className="curtain curtain-left"
+        variants={leftVariants}
+        animate={phase}
+        initial="closed"
+        transition={transition}
+      >
+        <div className="curtain-folds curtain-folds-left" />
+        <div className="curtain-sheen curtain-sheen-left" />
+        <div className="curtain-edge curtain-edge-left" />
+      </motion.div>
+      <motion.div
+        className="curtain curtain-right"
+        variants={rightVariants}
+        animate={phase}
+        initial="closed"
+        transition={transition}
+      >
+        <div className="curtain-folds curtain-folds-right" />
+        <div className="curtain-sheen curtain-sheen-right" />
+        <div className="curtain-edge curtain-edge-right" />
+      </motion.div>
+    </div>,
+    document.body
+  )
+}
+
 function LoadingExperience() {
   return <motion.div className="loading-screen" initial={{ opacity: 1 }} exit={{ opacity: 0, filter: 'blur(8px)' }} transition={{ duration: 0.65 }}><Stars /><MoonMark /><div className="loading-heart"><Heart size={24} fill="currentColor" /></div><p>Something special is waiting for you...</p></motion.div>
 }
@@ -386,7 +450,7 @@ function App() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  return <><AnimatePresence>{loading && <LoadingExperience key="loading" />}</AnimatePresence><div className={`site-shell ${loading ? '' : 'is-ready'}`}><Hero /><main><Stars /><FloatingHearts /><Letter /><Reasons /><Memories /><VoiceNote /><Letters /><Surprise /><Closing /></main></div><HeartCursor /></>
+  return <><AnimatePresence>{loading && <LoadingExperience key="loading" />}</AnimatePresence><div className={`site-shell ${loading ? '' : 'is-ready'}`}><Hero /><main><Stars /><FloatingHearts /><Letter /><Reasons /><Memories /><VoiceNote /><Letters /><Surprise /><Closing /></main></div><HeartCursor /><CurtainReveal /></>
 }
 
 export default App

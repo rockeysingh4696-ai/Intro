@@ -26,3 +26,126 @@
 .gift-pop{position:absolute;top:var(--origin-y);left:var(--origin-x);width:24px;height:24px;border:1px solid rgba(255,209,220,.9);border-radius:50%;box-shadow:0 0 24px rgba(240,68,117,.55);animation:pop-ring .72s cubic-bezier(.12,.72,.28,1) both}
 @keyframes pop-ring{0%{opacity:.85;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(12)}}
 @keyframes heart-throb{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+
+/* ── Cinematic Curtain Reveal ─────────────────────────────── */
+.curtain-reveal{position:fixed;z-index:9999;inset:0;pointer-events:none;display:flex}
+
+.curtain{
+  position:fixed;
+  top:0;
+  bottom:0;
+  width:50%;
+  will-change:transform;
+  overflow:hidden;
+}
+
+.curtain-left  { left:0;  transform-origin:left center; }
+.curtain-right { right:0; transform-origin:right center; }
+
+/* ── Base velvet fabric ── */
+.curtain-left,
+.curtain-right {
+  background:
+    /* deep vertical gradient */
+    linear-gradient(180deg,
+      #3b0a15 0%,
+      #5c1528 18%,
+      #7a1c36 38%,
+      #6b1730 55%,
+      #4e0e1f 75%,
+      #2e0710 100%
+    );
+}
+
+/* ── Vertical fold stripes (left panel — folds flow from center-seam outward) ── */
+.curtain-folds {
+  position:absolute;
+  inset:0;
+  background-size: 60px 100%;
+  background-repeat: repeat-x;
+  mix-blend-mode: multiply;
+  opacity: .72;
+}
+
+.curtain-folds-left {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,.55)   0px,
+      rgba(0,0,0,.0)    9px,
+      rgba(255,255,255,.04) 12px,
+      rgba(0,0,0,.0)   16px,
+      rgba(0,0,0,.48)  22px,
+      rgba(0,0,0,.0)   30px,
+      rgba(255,255,255,.03) 34px,
+      rgba(0,0,0,.0)   38px,
+      rgba(0,0,0,.44)  44px,
+      rgba(0,0,0,.0)   52px,
+      rgba(255,255,255,.02) 56px,
+      rgba(0,0,0,.0)   60px
+    );
+}
+
+.curtain-folds-right {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,.0)   0px,
+      rgba(0,0,0,.44)  8px,
+      rgba(0,0,0,.0)   16px,
+      rgba(255,255,255,.03) 20px,
+      rgba(0,0,0,.0)   24px,
+      rgba(0,0,0,.48)  30px,
+      rgba(0,0,0,.0)   38px,
+      rgba(255,255,255,.04) 44px,
+      rgba(0,0,0,.0)   50px,
+      rgba(0,0,0,.55)  58px,
+      rgba(0,0,0,.0)   60px
+    );
+}
+
+/* ── Specular sheen — a soft diagonal highlight ── */
+.curtain-sheen {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.curtain-sheen-left {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255,220,200,.06) 48%,
+    rgba(255,220,200,.11) 54%,
+    transparent 68%
+  );
+}
+
+.curtain-sheen-right {
+  background: linear-gradient(
+    -115deg,
+    transparent 30%,
+    rgba(255,220,200,.06) 48%,
+    rgba(255,220,200,.11) 54%,
+    transparent 68%
+  );
+}
+
+/* ── Inner-edge shadow — where the two curtains meet at center ── */
+.curtain-edge {
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:36px;
+  pointer-events:none;
+}
+
+.curtain-edge-left {
+  right:0;
+  background: linear-gradient(to left, rgba(0,0,0,.72), transparent);
+}
+
+.curtain-edge-right {
+  left:0;
+  background: linear-gradient(to right, rgba(0,0,0,.72), transparent);
+}
