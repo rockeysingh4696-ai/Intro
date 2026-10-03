@@ -49,40 +49,147 @@ function HeartTextPath() {
 }
 
 function HeartCursor() {
-  const cursor = useRef(null)
+  const cursorRef = useRef(null)
+  const trailRef = useRef(null)
 
   useEffect(() => {
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return undefined
-    const element = cursor.current
-    let targetX = -30
-    let targetY = -30
-    let x = targetX
-    let y = targetY
-    let frame
+    const cursor = cursorRef.current
+    const trail = trailRef.current
+    if (!cursor || !trail) return undefined
+
+    let targetX = -100
+    let targetY = -100
+    let currentX = targetX
+    let currentY = targetY
+    let trailX = targetX
+    let trailY = targetY
+    let currentTilt = 0
+    let isVisible = false
+    let isInitialized = false
+    let frameId
+    let lastTime = 0
+
     const move = (event) => {
       targetX = event.clientX
       targetY = event.clientY
-      element.classList.add('is-visible')
-      element.classList.toggle('is-hovering', Boolean(event.target.closest?.('a,button,input,textarea,select,[role="button"]')))
+
+      if (!isInitialized) {
+        currentX = targetX
+        currentY = targetY
+        trailX = targetX
+        trailY = targetY
+        isInitialized = true
+      }
+
+      if (!isVisible) {
+        isVisible = true
+        cursor.classList.add('is-visible')
+        trail.classList.add('is-visible')
+      }
+
+      const interactive = Boolean(event.target.closest?.('a, button, input, textarea, select, [role="button"], .envelope, .memory button, .gift-button'))
+      cursor.classList.toggle('is-hovering', interactive)
+      trail.classList.toggle('is-hovering', interactive)
     }
-    const leave = () => element.classList.remove('is-visible')
-    const animate = () => {
-      x += (targetX - x) * 0.22
-      y += (targetY - y) * 0.22
-      element.style.transform = `translate3d(${x}px,${y}px,0) translate(-50%,-50%)`
-      frame = window.requestAnimationFrame(animate)
+
+    const leave = () => {
+      isVisible = false
+      cursor.classList.remove('is-visible')
+      trail.classList.remove('is-visible')
     }
+
+    const enter = (event) => {
+      targetX = event.clientX
+      targetY = event.clientY
+      currentX = targetX
+      currentY = targetY
+      trailX = targetX
+      trailY = targetY
+      isVisible = true
+      cursor.classList.add('is-visible')
+      trail.classList.add('is-visible')
+    }
+
+    const down = () => {
+      cursor.classList.add('is-clicking')
+      trail.classList.add('is-clicking')
+    }
+
+    const up = () => {
+      cursor.classList.remove('is-clicking')
+      trail.classList.remove('is-clicking')
+    }
+
+    const animate = (currentTime) => {
+      if (!lastTime) lastTime = currentTime
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.05)
+      lastTime = currentTime
+
+      if (isInitialized) {
+        // Delta-time based smooth exponential decay (refresh-rate independent)
+        const cursorFactor = 1 - Math.exp(-28 * dt)
+        currentX += (targetX - currentX) * cursorFactor
+        currentY += (targetY - currentY) * cursorFactor
+
+        // Soft fluid trailing follower
+        const trailFactor = 1 - Math.exp(-12 * dt)
+        trailX += (targetX - trailX) * trailFactor
+        trailY += (targetY - trailY) * trailFactor
+
+        // Dynamic tilt based on horizontal velocity
+        const vx = targetX - currentX
+        const targetTilt = Math.max(-14, Math.min(14, vx * 0.12))
+        currentTilt += (targetTilt - currentTilt) * (1 - Math.exp(-14 * dt))
+
+        if (Math.abs(targetX - currentX) < 0.04) currentX = targetX
+        if (Math.abs(targetY - currentY) < 0.04) currentY = targetY
+        if (Math.abs(targetX - trailX) < 0.04) trailX = targetX
+        if (Math.abs(targetY - trailY) < 0.04) trailY = targetY
+
+        cursor.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) translate(-50%, -50%) rotate(${currentTilt.toFixed(2)}deg)`
+        trail.style.transform = `translate3d(${trailX.toFixed(2)}px, ${trailY.toFixed(2)}px, 0) translate(-50%, -50%)`
+      }
+
+      frameId = window.requestAnimationFrame(animate)
+    }
+
     window.addEventListener('pointermove', move, { passive: true })
-    window.addEventListener('pointerleave', leave)
-    frame = window.requestAnimationFrame(animate)
+    window.addEventListener('pointerdown', down, { passive: true })
+    window.addEventListener('pointerup', up, { passive: true })
+    document.addEventListener('mouseleave', leave)
+    document.addEventListener('mouseenter', enter)
+
+    frameId = window.requestAnimationFrame(animate)
+
     return () => {
       window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerleave', leave)
-      window.cancelAnimationFrame(frame)
+      window.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointerup', up)
+      document.removeEventListener('mouseleave', leave)
+      document.removeEventListener('mouseenter', enter)
+      window.cancelAnimationFrame(frameId)
     }
   }, [])
 
-  return <div className="heart-cursor" ref={cursor} aria-hidden="true"><svg viewBox="0 0 24 24"><defs><linearGradient id="cursor-heart-gradient" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8eaf" /><stop offset="1" stopColor="#d72655" /></linearGradient></defs><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" /></svg></div>
+  return (
+    <>
+      <div className="heart-cursor-trail" ref={trailRef} aria-hidden="true" />
+      <div className="heart-cursor" ref={cursorRef} aria-hidden="true">
+        <div className="heart-cursor-inner">
+          <svg viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="cursor-heart-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop stopColor="#ff8eaf" />
+                <stop offset="1" stopColor="#d72655" />
+              </linearGradient>
+            </defs>
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
+          </svg>
+        </div>
+      </div>
+    </>
+  )
 }
 
 function CurtainReveal() {
