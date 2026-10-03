@@ -30,12 +30,30 @@ export const birthdayData = {
   ],
   voiceNote: { audio: '/audio/voice-note.mp3', artwork: '/images/voice-artwork.jpg', description: 'A little hello for whenever you need to hear one.' },
   openWhen: [
-    { title: 'You need a soft place to land', message: 'You do not have to have it all figured out today. Take one breath, then another. You are allowed to rest before you try again, and you do not have to earn the right to be cared for. I am here, always.' },
-    { title: 'You miss me a little', message: 'I hope you know that somewhere, in the middle of an ordinary day, I am probably thinking about you too. Until we get to be in the same place, keep a little corner of this note close. I will meet you there.' },
-    { title: 'You need a bit of courage', message: 'Think of everything you once thought you could not do, and everything you did anyway. That person is still you. You have more in you than this moment is letting you see.' },
-    { title: 'The night feels too long', message: 'Let the day be done. Nothing needs solving at this hour. Get comfortable, put the phone down when you can, and remember that morning has a way of making things feel possible again.' },
-    { title: 'You forget how loved you are', message: 'Here is your reminder, in writing, so you can come back to it: you are important to me. Not for what you do or how well you are doing, but simply because you are you.' },
-    { title: 'You could use a small smile', message: 'Official notice: you are allowed to have dessert first, dance to the wrong part of the song, and send me a photo of whatever made you smile. I would very much like to see it.' },
+    {
+      title: 'You are beautiful in every way',
+      message: `Happy Birthday to the most beautiful girl I have ever met. ❤️\n\nBeauty with a brain, yes — but khoobsurat sirf surat se nahi, seerat se bhi.\n\nI genuinely love the way you think, the way you act, the way you care, and the way you understand people.\n\nThere is something about you that makes you genuinely rare, and I hope you always remember that.`,
+    },
+    {
+      title: 'You understand me like few people do',
+      message: `I genuinely love the way you understand me — sometimes even better than I understand myself. 🫶🏻\n\nThe way you listen, the way you notice little things, and sometimes the way you make me understand things too… it all means more than I probably say.\n\nYou have this beautiful ability to make someone feel heard without making a big deal out of it.`,
+    },
+    {
+      title: 'Somehow, you became someone special',
+      message: `Somewhere, I'll always be grateful to Bhagwan for bringing you into my life. ❤️\n\nKehne ko toh aap mujhse door ho, but you have never really made me feel that distance.\n\nSomehow, you've always been there. And that presence — even from far away — has meant a lot to me.\n\nSome people simply become a part of your life, and some quietly become a part of your heart.`,
+    },
+    {
+      title: 'You brought out my happiest side',
+      message: `I have smiled so much around you, and honestly, I don't think I had ever blushed this much before. 😂❤️\n\nYa seedha kahun toh shayad main apna yeh wala roop kabhi dekh hi nahi paata — ki haan, main aisa bhi hoon.\n\nKahin na kahin, you unlocked that childish, carefree side of me that I didn't even know was still there.\n\nAnd honestly, I feel lucky that I got to discover that version of myself with you.`,
+    },
+    {
+      title: 'Never change the beautiful you',
+      message: `You are one of the bravest girls I know. ❤️\n\nThe way you keep your family upfront, the way you dream, the way you carry your ambitions, and that smile of yours — all of it makes you who you are.\n\nSo please, never feel like you need to change yourself just to fit someone else's expectations.\n\nStay exactly the way you are — with your dreams, your craziness, your strength, your smile, and that little childish side too.`,
+    },
+    {
+      title: 'Keep dreaming. Keep smiling.',
+      message: `At last, Happy Birthday, Shree. 🥹❤️\n\nMast raho, khush raho, hamesha smile karti raho, aur life mein jo bhi dream dekho, usse achieve karo.\n\nThink big, dream bigger, and achieve even bigger — because I genuinely believe you are capable of it, and I know tum kar logi.\n\nBas aise hi rehna… and keep smiling.\n\nOnce again, Happy Birthday, Shree. ❤️🎂✨`,
+    },
   ],
   surprise: {
     eyebrow: 'A little surprise for you',
